@@ -1,0 +1,30 @@
+.item-date {
+    border-radius: 90px;
+    font-size: 14px;
+    padding: 5px;
+    margin: 0px;
+    background-color: CornflowerBlue;
+    color: white
+}
+
+.item-title {
+    position: absolute;
+    left: 120px;
+    color: black;
+}
+
+.item-level {
+    float: right;
+    color: red
+}
+
+.cust-ul-right {
+    float: right;
+    padding: 8px 8px;
+    font-size: 18px;
+    line-height: 20px
+}
+
+.item-delete-icon {
+    margin: 0px 0px 0px 5px;
+}

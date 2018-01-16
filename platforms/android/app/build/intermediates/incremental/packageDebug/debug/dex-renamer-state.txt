@@ -1,0 +1,4 @@
+#Tue Jan 16 19:08:38 CST 2018
+base.0=E\:\\Zhou\\Documents\\Cordova\\Reminders\\platforms\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+renamed.0=classes.dex
+file.0=E\:\\Zhou\\Documents\\Cordova\\Reminders\\platforms\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0\\classes.dex
