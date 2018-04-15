@@ -1,49 +1,231 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
-    <head>
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
+
+<head>
+    <meta charset="utf-8">
+    <title>提醒事项</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
+    <script src="js/jquery.min.js"></script>
+    <!-- 包括所有已编译的插件 -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- 引入自定义css -->
+    <link href="css/custom.css" rel="stylesheet"></link>
+    <!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+    <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+    <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="navbar-header col-xs-5">
+                    <a class="navbar-brand" href="#">提醒事项</a>
+                </div>
+                <div class="col-xs-7">
+                    <div class="dropdown cust-ul-right">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="selection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    选项
+                                                    <b class="caret"></b>
+                            </button>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="selection">
+                            <li>
+                                <button type="button" class="btn btn-link" id="button-add" data-toggle="modal" data-target="#addModal" data-whatever="@mdo">
+                                    <span class="glyphicon glyphicon-plus"></span>添加
+                                </button>
+                                <button type="button" class="btn btn-link" id="button-del" onclick="deleteSelection()">
+                                        <span class="glyphicon glyphicon-trash"></span>删除
+                                    </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cust-ul-right">
+                        <button type='button' id="divConceal" class='btn btn-link col-xs-' style="display: none;" onclick='location.reload() '>取消</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-    </body>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="panel-group col-md-12" id="accordion">
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addModalLabel">添加事项</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <select class="form-control" name="important-level" size="1" id="itemLevel">
+                                <option value="null" selected></option>
+                                <option value="low">LOW</option>
+                                <option value="mid">MID</option>
+                                <option value="high">HIGH</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="date" class="form-control" id="item-time" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" placeholder="事项标题..." id="item-title">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <textarea class="form-control" placeholder="事项详细..." id="item-content"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="addItem()" data-dismiss="modal">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var $panelGroup = $("#accordion");
+        console.log(localStorage.length);
+        var itemLength = localStorage.length;
+        var itemList = [];
+
+        for (var i = 0; i < itemLength; i++) {
+            var itemId = localStorage.key(i);
+            var valueStr = localStorage.getItem(itemId).split("[id:" + itemId + "]");
+            console.log(valueStr);
+            var itemTime = valueStr[0];
+            var title = valueStr[1];
+            var content = valueStr[2];
+            var itemLevel = valueStr[3];
+            itemList.push({
+                ITEMID: itemId,
+                ITEMTIME: itemTime,
+                TITLE: title,
+                CONTENT: content,
+                ITEMLEVEL: itemLevel
+            })
+        }
+        console.log(itemList);
+        itemList = quickSort(itemList);
+
+        for (var i = 0; i < itemLength; i++) {
+            //localStorage.removeItem(itemList[i].ITEMID);
+            //continue;
+            var levelStr;
+            switch (itemList[i].ITEMLEVEL) {
+                case "low":
+                    {
+                        levelStr = "<span class='glyphicon glyphicon-fire'></span>";
+                        break;
+                    }
+                case "mid":
+                    {
+                        levelStr = "<span class='glyphicon glyphicon-fire'></span>" + "<span class='glyphicon glyphicon-fire'></span>";
+                        break;
+                    }
+                case "high":
+                    {
+                        levelStr = "<span class='glyphicon glyphicon-fire'></span>" + "<span class='glyphicon glyphicon-fire'></span>" + "<span class='glyphicon glyphicon-fire'></span>";
+                        break;
+                    }
+                default:
+                    {
+                        levelStr = "";
+                        break;
+                    }
+            }
+            levelStr = "<span class='item-level'>" + levelStr + "</span>";
+            $panelGroup.append(
+                "<div class='panel panel-default'><div class='panel-heading' id='itemPanel'>" +
+                "<h4 class='panel-title' data-toggle='collapse' data-parent='#accordion' href='#collapse" + itemList[i].ITEMID + "' aria-expanded='false' aria-controls='collapse" + itemList[i].ITEMID + "'>" +
+                "<a>" +
+                "<span class='item-date'>" + itemList[i].ITEMTIME + "</span>" + "<span class='item-title'>" + itemList[i].TITLE + "</span>" + levelStr +
+                "</a>" +
+                "</h4>" +
+                "</div>" +
+                "<div id='collapse" + itemList[i].ITEMID + "' class='panel-collapse collapse'>" +
+                "<div class='panel-body'>" +
+                itemList[i].CONTENT +
+                "</div>" +
+                "</div>" +
+                "</div>"
+            );
+        }
+
+        function quickSort(elements) {
+            if (elements.length <= 1) {
+                return elements;
+            }
+            var pivotIndex = Math.floor(elements.length / 2);
+            var pivot = elements.splice(pivotIndex, 1)[0];
+            var left = [];
+            var right = [];
+            //console.log(elements);
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].ITEMTIME < pivot.ITEMTIME) {
+                    left.push(elements[i]);
+                } else {
+                    right.push(elements[i]);
+                }
+            }
+            return quickSort(left).concat([pivot], quickSort(right));
+        }
+
+        function addItem() {
+            var title, content, itemTime, itemLevel;
+            var $title = $("#item-title");
+            title = $title.val();
+            var $content = $("#item-content");
+            content = $content.val();
+            var $itemTime = $("#item-time");
+            itemTime = $itemTime.val();
+            if (itemTime == "") {
+                itemTime = "9999-12-31"
+            }
+            var $itemLevel = $("#itemLevel");
+            itemlevel = $itemLevel.val();
+            var date = new Date();
+            var itemId = date.getFullYear().toString() + date.getMonth().toString() + date.getDate().toString() + date.getTime().toString();
+            localStorage.setItem(itemId, itemTime + "[id:" + itemId + "]" + title + "[id:" + itemId + "]" + content + "[id:" + itemId + "]" + itemlevel);
+            location.reload();
+        }
+
+        function deleteSelection() {
+            var $panelGroup = $(".item-level");
+            $panelGroup.append(
+                "<span class='glyphicon glyphicon-remove-circle item-delete-icon' onclick='RemoveItem(this)'></span>"
+            );
+            $("#divConceal").show();
+            document.getElementById("button-add").disabled = true;
+            document.getElementById("button-del").disabled = true;
+        }
+
+        function RemoveItem(item) {
+            var needRemove = item.parentNode.parentNode.parentNode.parentNode.nextSibling;
+            var itemKey = needRemove.id.split("collapse");
+            localStorage.removeItem(itemKey[1]);
+            location.reload();
+        }
+    </script>
+</body>
+
 </html>

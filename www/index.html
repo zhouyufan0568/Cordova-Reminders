@@ -22,6 +22,7 @@
 </head>
 
 <body>
+    <!-- navbar用来显示导航栏（应用名字，选项） -->
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="row">
@@ -29,7 +30,10 @@
                     <a class="navbar-brand" href="#">提醒事项</a>
                 </div>
                 <div class="col-xs-7">
+                    <!-- dropdown用来显示下拉框 -->
                     <div class="dropdown cust-ul-right">
+                        <!-- aria-haspopup :true表示点击的时候会出现菜单或是浮动元素；
+                            aria-expanded:表示展开状态。-->
                         <button class="btn btn-link dropdown-toggle" type="button" id="selection" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     选项
                                                     <b class="caret"></b>
@@ -46,6 +50,7 @@
                         </ul>
                     </div>
                     <div class="cust-ul-right">
+                        <!-- 取消按钮默认不显示 -->
                         <button type='button' id="divConceal" class='btn btn-link col-xs-' style="display: none;" onclick='location.reload() '>取消</button>
                     </div>
                 </div>
@@ -103,13 +108,17 @@
         </div>
     </div>
     <script type="text/javascript">
+        //获取panel-group组件
         var $panelGroup = $("#accordion");
         console.log(localStorage.length);
+        //获取本地存储的长度
         var itemLength = localStorage.length;
         var itemList = [];
-
+        //读取存储在本地的记录到itemlist中
         for (var i = 0; i < itemLength; i++) {
+            //从0读取本地存储的id
             var itemId = localStorage.key(i);
+            //通过id获取相应
             var valueStr = localStorage.getItem(itemId).split("[id:" + itemId + "]");
             console.log(valueStr);
             var itemTime = valueStr[0];
@@ -125,8 +134,9 @@
             })
         }
         console.log(itemList);
+        //按时间进行快排
         itemList = quickSort(itemList);
-
+        //将itemList数组中的记录添加到panelGroup
         for (var i = 0; i < itemLength; i++) {
             //localStorage.removeItem(itemList[i].ITEMID);
             //continue;
@@ -156,6 +166,7 @@
             levelStr = "<span class='item-level'>" + levelStr + "</span>";
             $panelGroup.append(
                 "<div class='panel panel-default'><div class='panel-heading' id='itemPanel'>" +
+                //用itemid来命名
                 "<h4 class='panel-title' data-toggle='collapse' data-parent='#accordion' href='#collapse" + itemList[i].ITEMID + "' aria-expanded='false' aria-controls='collapse" + itemList[i].ITEMID + "'>" +
                 "<a>" +
                 "<span class='item-date'>" + itemList[i].ITEMTIME + "</span>" + "<span class='item-title'>" + itemList[i].TITLE + "</span>" + levelStr +
@@ -170,7 +181,7 @@
                 "</div>"
             );
         }
-
+        //按时间快排
         function quickSort(elements) {
             if (elements.length <= 1) {
                 return elements;
@@ -189,7 +200,7 @@
             }
             return quickSort(left).concat([pivot], quickSort(right));
         }
-
+        //将模态框中输入的信息添加到本地存储
         function addItem() {
             var title, content, itemTime, itemLevel;
             var $title = $("#item-title");
@@ -208,20 +219,24 @@
             localStorage.setItem(itemId, itemTime + "[id:" + itemId + "]" + title + "[id:" + itemId + "]" + content + "[id:" + itemId + "]" + itemlevel);
             location.reload();
         }
-
+        //删除选项
         function deleteSelection() {
             var $panelGroup = $(".item-level");
+            //在item-level后添加删除按钮
             $panelGroup.append(
                 "<span class='glyphicon glyphicon-remove-circle item-delete-icon' onclick='RemoveItem(this)'></span>"
             );
+            //显示取消按钮
             $("#divConceal").show();
+            //下拉框中的按钮处于不可选取状态
             document.getElementById("button-add").disabled = true;
             document.getElementById("button-del").disabled = true;
         }
-
+        //
         function RemoveItem(item) {
             var needRemove = item.parentNode.parentNode.parentNode.parentNode.nextSibling;
             var itemKey = needRemove.id.split("collapse");
+            //通过collapse切割获得key用来删除
             localStorage.removeItem(itemKey[1]);
             location.reload();
         }
